@@ -1,0 +1,48 @@
+/* #region main.css */
+
+.mainBody {
+    font-family:'Courier New', Courier, monospace;
+    background-color:rgb(244, 230, 204);
+    border: 2px solid rgb(0, 0, 0);
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+}
+    .title {
+        margin: 0%;
+    }
+    
+    .navBar {
+        display: flex;
+        list-style: none;
+        gap: 1rem;
+        margin: 0%;
+        padding: 0%;
+    }
+        .navBar li {
+            display: inline-block;
+            position: relative;
+        }
+
+        .navBar li:hover {
+            background-color: #f3407986;
+        }
+
+        .navBar ul {
+            text-align: center;
+            padding: 5px;
+            margin: 0 auto;
+        }
+        
+        .navBar ul li {
+            list-style-type: none;
+            text-align: center;
+            padding: 5px;
+        }
+
+/* #endregion */
