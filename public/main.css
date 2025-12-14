@@ -3,24 +3,24 @@
 .mainBody {
     font-family:'Courier New', Courier, monospace;
     background-color:rgb(244, 230, 204);
-    border: 2px solid rgb(0, 0, 0);
+    border: 3px solid rgb(0, 0, 0);
     padding: 20px;
+    min-height: 100vh;
 }
 
 .header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem;
 }
     .title {
         margin: 0%;
+        font-size: 40px;
     }
-    
+
     .navBar {
         display: flex;
         list-style: none;
-        gap: 1rem;
         margin: 0%;
         padding: 0%;
     }
@@ -30,7 +30,7 @@
         }
 
         .navBar li:hover {
-            background-color: #f3407986;
+            background-color: #0000001e;
         }
 
         .navBar ul {
@@ -44,5 +44,27 @@
             text-align: center;
             padding: 5px;
         }
+
+/* #endregion */
+
+
+/* #region home.css */
+
+#majorDelaysTable {
+    width: 100%;              
+    margin: 0 auto;  
+    border-collapse: collapse;
+    border: 4px solid black;
+}
+
+    #majorDelaysTable th {
+        text-align: center;      
+        padding: 10px;
+    }
+
+    #majorDelaysTable td {
+        text-align: center;
+        padding: 10px;
+    }
 
 /* #endregion */
