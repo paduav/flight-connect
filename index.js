@@ -40,7 +40,7 @@ app.get('/about', (req, res) => {
 
 
 
-// API routes
+/* API routes */
 app.get('/flights', async (req, res) => {
     const { data, error } = await supabase.from('flights').select();
 
@@ -53,6 +53,54 @@ app.get('/flights', async (req, res) => {
 app.post('/flights', (req, res) => {
     res.json(req.body);
 });
+
+
+
+/* Fetch data from AviationStack API
+async function fetchFlights() {
+    const res = await fetch(''); // REMEMBER TO CHANGE FETCH URL
+
+    const data = await res.json();
+    return data.data;
+}
+
+async function cacheFlights() {
+    const flights = await fetchFlights();
+    console.log('Fetched Flights:', flights);   
+
+    const formattedFlights = flights.map(f => ({
+        flight_iata: f.flight.iata,
+        flight_number: f.flight.number,
+        departure_airport: f.departure.iata,
+        arrival_airport: f.arrival.iata,
+        departure_time: f.departure.scheduled,
+        arrival_time: f.arrival.scheduled,
+        arrival_delay: f.arrival.delay,
+        flight_status: f.flight_status
+    }));
+
+    const { data, error } = await supabase
+        .from('flights')
+        .insert(formattedFlights); 
+
+    if (error) console.error('Error caching flights:', error);
+    else console.log('Flights cached successfully');
+}
+cacheFlights();
+
+
+app.get('/flights', async (req, res) => {
+    const { data, error } = await supabase
+        .from('flights')
+        .select('*')
+        .order('departure_time', { ascending: false })
+        .limit(100); // most recent 100 flights
+
+    if (error) return res.status(400).json({ error });
+    res.json({ data });
+});
+*/
+
 
 
 
