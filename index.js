@@ -45,79 +45,105 @@ app.get('/about', (req, res) => {
 // Functions 
 /// Fetch data from AviationStack API
 async function fetchFlights() {
-    const res = await fetch(''); // REMEMBER TO CHANGE FETCH URL
+    try {
+        const res = await fetch('');
+        const data = await res.json();
 
-    const data = await res.json();
-    return data.data;
+        if (!data || !data.data || !Array.isArray(data.data)) {
+            console.error('Invalid API response:', data);
+            return [];  // always return an array
+        }
+
+        return data.data;
+    } catch (err) {
+        console.error('Failed to fetch flights:', err);
+        return []; // fallback to empty array
+    }
 }
+
+
 
 /// Cache fetched data to Supabase
 async function cacheFlights() {
     const flights = await fetchFlights();
-    console.log('Fetched Flights:', flights);
+    console.log('Fetched flights:', flights);
 
-    const formattedFlights = flights.map(f => ({
-        flight_iata: f.flight.iata,
-        flight_number: f.flight.number,
-        departure_airport: f.departure.iata,
-        arrival_airport: f.arrival.iata,
-        departure_time: f.departure.scheduled,
-        arrival_time: f.arrival.scheduled,
-        arrival_delay: f.arrival.delay,
-        flight_status: f.flight_status
+    const formattedFlights = flights.map((f, index) => ({
+        flight_iata: f.flight?.iata || `UNKNOWN-${index}`,
+        flight_number: f.flight?.number || 'N/A',
+        departure_airport: f.departure?.iata || 'N/A',
+        arrival_airport: f.arrival?.iata || 'N/A',
+        departure_time: f.departure?.scheduled || null,
+        arrival_time: f.arrival?.scheduled || null,
+        arrival_delay: f.arrival?.delay || 0,
+        flight_status: f.flight_status || 'unknown'
     }));
 
-    const { data, error } = await supabase
+    // Remove duplicates based on flight_iata
+    const uniqueFlights = Array.from(
+        new Map(formattedFlights.map(f => [f.flight_iata, f])).values()
+    );
+    
+    // Upsert and return full rows with IDs
+    const { data: upsertedFlights, error } = await supabase
         .from('flights')
         .upsert(formattedFlights, { onConflict: 'flight_iata', returning: 'representation' });
 
-    if (error) console.error('Error caching flights:', error);
-    else console.log('Flights cached successfully');
+    if (error) {
+        console.error('Error caching flights:', error);
+        return [];
+    }
+
+    // console.log(`Cached ${upsertedFlights.length} flights`);
+    return upsertedFlights; // these have IDs
 }
 
 /// Random passenger generator
 function generatePassengers(flightId, count = 20) {
-    const firstNames = ['Virgil', 'Samantha', 'Noah', 'Noel', 'Virginia']
-    const lastNames = ['Smith', 'Johnson', 'Lee', 'Garcia', 'Brown']
+    const firstNames = ['Virgil', 'Samantha', 'Noah', 'Noel', 'Virginia', 'Kurt', 'Carol','Brandon','Bethany','Ernie','Phoebe','Lenny','Jessica','Allen','Ginger'];
+    const lastNames = ['Smith', 'Johnson', 'Lee', 'Garcia', 'Brown','Sanchez','Terry','Freeman','Owens','Young','Preston','Brooks','Castillo','Carson','Dallas'];
 
     return Array.from({ length: count }).map(() => ({
         first_name: firstNames[Math.floor(Math.random() * firstNames.length)],
         last_name: lastNames[Math.floor(Math.random() * lastNames.length)],
-        //email: `passenger${Math.floor(Math.random() * 10000)}@example.com`,
-        checked_in: Math.random() > 0.5,
+        checked_in: Math.random() > 0.8,
         flight_id: flightId
-    }))
+    }));
 }
 
 /// Fill passengers
 async function fillPassengersForFlights() {
     const { data: flights, error } = await supabase
         .from('flights')
-        .select('id')
+        .select('id, flight_iata');
 
     if (error) {
-        console.error('Error fetching flights:', error)
-        return
+        console.error('Error fetching flights for passengers:', error);
+        return;
     }
 
-    console.log('Flights found for passenger generation:', flights)
+    if (!flights || flights.length === 0) {
+        console.warn('No flights found for passenger generation');
+        return;
+    }
 
     for (const flight of flights) {
         if (!flight.id) {
-            console.warn('Skipping flight with undefined ID:', flight)
-            continue
+            console.warn('Skipping flight with missing ID:', flight);
+            continue;
         }
 
-        const passengers = generatePassengers(flight.id, 30)
+        const passengers = generatePassengers(flight.id, 30);
 
-        const { data, error } = await supabase
+        const { data: insertedPassengers, error: insertError } = await supabase
             .from('passengers')
             .insert(passengers)
+            .select();
 
-        if (error) {
-            console.error('Passenger insert error:', error)
+        if (insertError) {
+            console.error(`Failed to insert passengers for flight ${flight.flight_iata}:`, insertError);
         } else {
-            console.log(`Inserted ${data.length} passengers for flight ID ${flight.id}`)
+            console.log(`Inserted ${insertedPassengers.length} passengers for flight ${flight.flight_iata}`);
         }
     }
 }
@@ -128,13 +154,15 @@ async function fillPassengersForFlights() {
 /// Cache flight schedules to Supabase
 app.post('/cache-flights', async (req, res) => {
     try {
-        await cacheFlights()
-        await fillPassengersForFlights()
-        res.json({ message: 'Flights cached successfully' })
+        const flights = await cacheFlights();
+
+        await fillPassengersForFlights();
+        res.json({ message: 'Flights and passengers cached successfully' });
     } catch (err) {
-        res.status(500).json({ error: 'Failed to cache flights' })
+        console.error('Error in /cache-flights:', err);
+        res.status(500).json({ error: 'Failed to cache flights and passengers' });
     }
-})
+});
 
 /// Fill passengers for flights
 app.post('/fill-passengers', async (req, res) => {
