@@ -1,5 +1,11 @@
 // dashboard.js
 
+
+
+// REMEMBER TO CHANGE FETCH URLs
+
+
+
 function getTopDelays() {
     fetch(`http://localhost:3001/v1/flights?min_delay_arr=1&access_key=c3e1530a346fbe1ce47204b80d03efca`)
     .then(response => response.json())
@@ -41,31 +47,59 @@ function getTopDelays() {
 
 
 function getFlightStatusChart() {
-    const ctx = document.getElementById('flightStatusChart');
+    const ctx = document.getElementById('flightStatusChart').getContext('2d');
 
-    new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-        labels: [
-            'On Time',
-            'Delayed',
-            'Cancelled',
-            'Diverted'
-        ],
-        datasets: [{
-            label: 'My First Dataset',
-            data: [300, 50, 100, 25],
-            backgroundColor: [
-                'rgba(128, 255, 99, 1)',
-                'rgba(235, 217, 54, 1)',
-                'rgba(255, 86, 86, 1)',
-                'rgba(98, 79, 242, 1)'
-            ],
-            hoverOffset: 4
-        }]
+    fetch(`http://localhost:3001/v1/flights?limit=100&sort=desc&access_key=c3e1530a346fbe1ce47204b80d03efca`)
+    .then(response => response.json())
+    .then(data => {
+        const flights = data.data;
+        console.log('Fetched Flights for Chart:', flights);
+
+        let onTime = 0, delayed = 0, cancelled = 0, diverted = 0;
+
+        flights.forEach(flight => {
+            if (flight.flight_status === 'cancelled') cancelled++;
+            else if (flight.flight_status === 'diverted') diverted++;
+            else if (flight.arrival.delay && flight.arrival.delay > 0) delayed++;
+            else onTime++;
+        });
+
+        console.log('Flight Status Counts:', { onTime, delayed, cancelled, diverted });
+
+        if (window.flightStatusChartInstance) {
+            window.flightStatusChartInstance.destroy();
         }
-    });
+
+        window.flightStatusChartInstance = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['On Time', 'Delayed', 'Cancelled', 'Diverted'],
+                datasets: [{
+                    label: 'Flight Status Distribution',
+                    data: [onTime, delayed, cancelled, diverted],
+                    backgroundColor: [
+                        'rgba(128, 255, 99, 1)',
+                        'rgba(235, 217, 54, 1)',
+                        'rgba(255, 86, 86, 1)',
+                        'rgba(98, 79, 242, 1)'
+                    ],
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Flight Status Distribution (Lastest 100 Flights)'
+                    }
+                }
+            }
+        });
+    })
 }
+
 
 window.onload = () => {
     getTopDelays(); getFlightStatusChart();
