@@ -11,7 +11,8 @@ const supabaseClient = require('@supabase/supabase-js');
 
 // Middleware
 app.use(bodyParser.json());
-app.use('/static', express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public')));
+
 
 
 // Initialize Supabase
@@ -24,6 +25,19 @@ const supabase = supabaseClient.createClient(supabaseUrl, supabaseKey);
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'dashboard.html'));
 });
+
+app.get('/dashboard', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'dashboard.html'));
+});
+
+app.get('/schedules', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'schedules.html'));
+});
+
+app.get('/about', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'about.html'));
+});
+
 
 
 // API routes
