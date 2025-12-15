@@ -139,3 +139,24 @@
 
 
 /* #endregion */
+
+
+/* #region schedules.css */
+#timeTable {
+    width: 100%;              
+    margin: 0 auto;  
+    border-collapse: collapse;
+    border: 4px solid black;
+}
+
+    #timeTable th {
+        text-align: center;      
+        padding: 10px;
+    }
+
+    #timeTable td {
+        text-align: center;
+        padding: 10px;
+    }
+
+/* #endregion */
