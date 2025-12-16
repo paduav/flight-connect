@@ -54,6 +54,7 @@
     color: #000000;
     cursor: pointer;
     display: inline-block;
+    font-family: 'Courier New';;
     font-weight: 600;
     font-size: 18px;
     padding: 0 18px;
@@ -142,21 +143,84 @@
 
 
 /* #region schedules.css */
-#timeTable {
-    width: 100%;              
-    margin: 0 auto;  
-    border-collapse: collapse;
-    border: 4px solid black;
+
+#schedulesContainer {
+    display: grid;
+    grid-template-columns: 1fr 2fr; /* Left panel 1/3, right panel 2/3 */
+    gap: 30px;
+    align-items: start;
 }
 
-    #timeTable th {
-        text-align: center;      
-        padding: 10px;
+    #leftPanel, #rightPanel {
+        background: rgb(241, 223, 191);
+        padding: 15px;
+        border: 3px solid black;
     }
 
-    #timeTable td {
-        text-align: center;
-        padding: 10px;
+        #leftPanel thead th {
+            position: sticky;
+            top: 0;
+            background: rgb(236, 211, 167);
+            z-index: 2;
+        }
+
+
+    #passengersContainer {
+        max-height: 500px;   
+        overflow-y: auto;
     }
+
+    #passengersContainer table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        #passengersContainer th,
+        #passengersContainer td {
+            border: 2px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+
+    #timeTableContainer {
+        max-height: 500px;
+        overflow-y: auto;
+    }
+
+        #timeTable {
+            width: 100%;              
+            margin: 0 auto;  
+            border-collapse: collapse;
+            border: 2px solid black;
+        }
+
+            #timeTable tr {
+                border: 2px solid black;
+                padding: 8px;
+                text-align: center;
+            }
+            
+            #timeTable th {
+                text-align: center;      
+                padding: 10px;
+            }
+
+            #timeTable thead th {
+                position: sticky;
+                top: 0;
+                background: rgb(236, 211, 167);
+                z-index: 2;
+            }
+
+            #timeTable td {
+                text-align: center;
+                padding: 10px;
+            }
+
+            .active-flight {
+                background-color: #f0f0f0;
+                font-weight: bold;
+            }
+
 
 /* #endregion */

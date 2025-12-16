@@ -19,12 +19,16 @@ async function loadSchedules() {
             const row = document.createElement('tr')
             row.style.cursor = 'pointer'
             row.addEventListener('click', () => {
+                document.querySelectorAll('#timeTable tr').forEach(r => r.classList.remove('active-flight'))
+
+                row.classList.add('active-flight')
+                
                 loadPassengers(flight.id)
             })
 
 
             row.innerHTML = `
-                <td>${flight.flight_number || 'N/A'}</td>
+                <td>${flight.flight_iata || 'N/A'}</td>
                 <td>${flight.departure_airport || 'N/A'}</td>
                 <td>${flight.arrival_airport || 'N/A'}</td>
                 <td>${formatTime(flight.departure_time) || 'N/A'}</td>
