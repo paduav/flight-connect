@@ -51,13 +51,13 @@ async function fetchFlights() {
 
         if (!data || !data.data || !Array.isArray(data.data)) {
             console.error('Invalid API response:', data);
-            return [];  
+            return [];
         }
 
         return data.data;
     } catch (err) {
         console.error('Failed to fetch flights:', err);
-        return []; 
+        return [];
     }
 }
 
@@ -66,16 +66,29 @@ async function cacheFlights() {
     const flights = await fetchFlights();
     console.log('Fetched flights:', flights);
 
-    const formattedFlights = flights.map((f, index) => ({
-        flight_iata: f.flight?.iata || `UNKNOWN_${index}`,
-        flight_number: f.flight?.number || 'N/A',
-        departure_airport: f.departure?.iata || 'N/A',
-        arrival_airport: f.arrival?.iata || 'N/A',
-        departure_time: f.departure?.scheduled || null,
-        arrival_time: f.arrival?.scheduled || null,
-        arrival_delay: f.arrival?.delay || 0,
-        flight_status: f.flight_status || 'unknown'
-    }));
+    const formattedFlights = flights.map((f, index) => {
+        const flight = {
+            flight_iata: f.flight?.iata || `UNKNOWN_${index}`,
+            flight_number: f.flight?.number || 'N/A',
+            departure_airport: f.departure?.iata || 'N/A',
+            arrival_airport: f.arrival?.iata || 'N/A',
+            departure_time: f.departure?.scheduled || null,
+            arrival_time: f.arrival?.scheduled || null,
+            arrival_delay: f.arrival?.delay || 0,
+            flight_status: f.flight_status || 'unknown',
+        };
+
+        // only add live fields if Aviationstack provides them
+        if (f.live?.latitude != null && f.live?.longitude != null) {
+            flight.live_latitude = f.live.latitude;
+            flight.live_longitude = f.live.longitude;
+            flight.live_updated = f.live.updated;
+        }
+
+        return flight;
+    });
+
+    
 
     // Remove duplicates based on flight_iata
     const uniqueFlights = Array.from(
@@ -85,7 +98,7 @@ async function cacheFlights() {
     // Upsert and return full rows with IDs
     const { data: upsertedFlights, error } = await supabase
         .from('flights')
-        .upsert(formattedFlights, { onConflict: 'flight_iata', returning: 'representation' });
+        .upsert(uniqueFlights, { onConflict: 'flight_iata', returning: 'representation' });
 
     if (error) {
         console.error('Error caching flights:', error);
@@ -99,10 +112,10 @@ async function cacheFlights() {
 /// Random passenger generator
 function generatePassengers(flightId, count = 20) {
     const firstNames = [
-        'Virgil', 'Samantha', 'Noah', 'Noel', 'Virginia', 'Kurt', 'Carol', 'Brandon', 'Bethany', 'Ernie', 'Phoebe', 'Lenny', 'Jessica', 'Allen', 'Ginger', 'Dale','Molly', 'Trevor', 'Diana', 'Gloria', 'Evan', 'Tina', 'Russell', 'Melanie', 'Curtis', 'Yvonne', 'Leonard', 'Chelsea', 'Derek', 'Suzanne','Shawn', 'Cynthia', 'Randall', 'Lori', 'Barry', 'Kristin', 'Alexander', 'Jill', 'Francis', 'Erica','Mitchell', 'Becky', 'Calvin', 'Holly', 'Clayton', 'Monica', 'Shane', 'Jasmine', 'Jamie', 'Natalie','Phillip', 'Sabrina', 'Marcus', 'Rosemary', 'Dustin', 'Kelsey', 'Trevor', 'Leah', 'Geoffrey', 'Carmen', 'Shaun', 'Casey', 'Darryl', 'Angelica', 'Jared', 'Margaret','Anmol'
+        'Virgil', 'Samantha', 'Noah', 'Noel', 'Virginia', 'Kurt', 'Carol', 'Brandon', 'Bethany', 'Ernie', 'Phoebe', 'Lenny', 'Jessica', 'Allen', 'Ginger', 'Dale', 'Molly', 'Trevor', 'Diana', 'Gloria', 'Evan', 'Tina', 'Russell', 'Melanie', 'Curtis', 'Yvonne', 'Leonard', 'Chelsea', 'Derek', 'Suzanne', 'Shawn', 'Cynthia', 'Randall', 'Lori', 'Barry', 'Kristin', 'Alexander', 'Jill', 'Francis', 'Erica', 'Mitchell', 'Becky', 'Calvin', 'Holly', 'Clayton', 'Monica', 'Shane', 'Jasmine', 'Jamie', 'Natalie', 'Phillip', 'Sabrina', 'Marcus', 'Rosemary', 'Dustin', 'Kelsey', 'Trevor', 'Leah', 'Geoffrey', 'Carmen', 'Shaun', 'Casey', 'Darryl', 'Angelica', 'Jared', 'Margaret', 'Anmol'
     ];
     const lastNames = [
-        'Smith', 'Johnson', 'Lee', 'Garcia', 'Brown', 'Sanchez', 'Terry', 'Freeman', 'Owens', 'Young', 'Preston', 'Brooks', 'Castillo', 'Carson', 'Dallas','Fleming', 'Hodges', 'Nolan', 'Brock', 'Hunt', 'Ramos', 'Maldonado', 'Farmer', 'Huang', 'Nixon', 'Crawford', 'Henry', 'Boyd', 'Mason', 'Morales','Kennedy', 'Warren', 'Dixon', 'Rojas', 'Hanson', 'Johnston', 'Stevenson', 'Dean', 'Gilbert', 'Garner','Sutton', 'Greene', 'Burke', 'Haynes', 'Ford', 'Hamilton', 'Graham', 'Sullivan', 'Wallace', 'Woods','Coleman', 'West', 'Jordan', 'Owens', 'Reynolds', 'Fisher', 'Ellis', 'Harrison','Gibson', 'McDonald'
+        'Smith', 'Johnson', 'Lee', 'Garcia', 'Brown', 'Sanchez', 'Terry', 'Freeman', 'Owens', 'Young', 'Preston', 'Brooks', 'Castillo', 'Carson', 'Dallas', 'Fleming', 'Hodges', 'Nolan', 'Brock', 'Hunt', 'Ramos', 'Maldonado', 'Farmer', 'Huang', 'Nixon', 'Crawford', 'Henry', 'Boyd', 'Mason', 'Morales', 'Kennedy', 'Warren', 'Dixon', 'Rojas', 'Hanson', 'Johnston', 'Stevenson', 'Dean', 'Gilbert', 'Garner', 'Sutton', 'Greene', 'Burke', 'Haynes', 'Ford', 'Hamilton', 'Graham', 'Sullivan', 'Wallace', 'Woods', 'Coleman', 'West', 'Jordan', 'Owens', 'Reynolds', 'Fisher', 'Ellis', 'Harrison', 'Gibson', 'McDonald'
     ];
 
     return Array.from({ length: count }).map(() => ({
@@ -155,7 +168,7 @@ async function clearPassengers() {
     const { error } = await supabase
         .from('passengers')
         .delete()
-        .neq('id', 0); 
+        .neq('id', 0);
 
     if (error) {
         console.error('Failed to clear passengers:', error);
