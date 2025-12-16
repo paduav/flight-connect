@@ -122,6 +122,7 @@ function generatePassengers(flightId, count = 20) {
         first_name: firstNames[Math.floor(Math.random() * firstNames.length)],
         last_name: lastNames[Math.floor(Math.random() * lastNames.length)],
         checked_in: Math.random() > 0.15,
+        ticket_reissued: false,
         flight_id: flightId
     }));
 }
@@ -228,6 +229,47 @@ app.get('/flights/:id/passengers', async (req, res) => {
     if (error) return res.status(500).json({ error })
     res.json({ data })
 })
+
+// Reissue tickets
+app.post('/flights/:flightId/reissue-tickets', async (req, res) => {
+    const { flightId } = req.params;
+
+    try {
+
+        const { data: passengers, error } = await supabase
+            .from('passengers')
+            .select('*')
+            .eq('flight_id', flightId)
+            .eq('checked_in', false)
+            .eq('ticket_reissued', false);
+
+        if (error) throw error;
+
+        if (!passengers.length) {
+            return res.json({ message: 'No passengers eligible for reissue' });
+        }
+
+        const updates = passengers.map(p => ({
+            id: p.id,
+            ticket_reissued: true
+        }));
+
+        const { error: updateError } = await supabase
+            .from('passengers')
+            .upsert(updates);
+
+        if (updateError) throw updateError;
+
+        res.json({
+            message: `Reissued ${updates.length} tickets`,
+            reissued_count: updates.length
+        });
+
+    } catch (err) {
+        console.error('Reissue error:', err);
+        res.status(500).json({ error: 'Failed to reissue tickets' });
+    }
+});
 
 
 
