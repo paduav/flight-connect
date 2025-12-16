@@ -4,6 +4,8 @@ let allFlights = [];
 let map;
 let flightMarker = null;
 let sortByDelay = false;
+let selectedFlightId = null;
+
 
 
 function formatTime(ts) {
@@ -72,6 +74,8 @@ function renderFlights(flights) {
                 .querySelectorAll('#timeTable tr')
                 .forEach(r => r.classList.remove('active-flight'));
 
+            selectedFlightId = flight.id;
+
             row.classList.add('active-flight');
             loadPassengers(flight.id);
             showFlightOnMap(flight);
@@ -117,6 +121,7 @@ async function loadPassengers(flightId) {
                 <tr>
                     <th>Name</th>
                     <th>Checked In</th>
+                    <th>Ticket Status</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -129,6 +134,11 @@ async function loadPassengers(flightId) {
             row.innerHTML = `
                 <td>${p.first_name} ${p.last_name}</td>
                 <td>${p.checked_in ? 'Yes' : 'No'}</td>
+                <td>
+                    ${p.ticket_reissued
+                        ? '<span class="badge reissued">Reissued</span>'
+                        : '—'}
+                </td>
             `
             tbody.appendChild(row)
         })
@@ -262,6 +272,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+document.getElementById('reissueTickets')
+    .addEventListener('click', async () => {
+
+    if (!selectedFlightId) {
+        alert('Select a flight first');
+        return;
+    }
+
+    if (!confirm('Reissue tickets for all unchecked passengers?')) return;
+
+    const response = await fetch(
+        `/flights/${selectedFlightId}/reissue-tickets`,
+        { method: 'POST' }
+    );
+
+    const result = await response.json();
+
+    alert(result.message);
+
+    // Reload passengers to show updated status
+    loadPassengers(selectedFlightId);
+});
 
 
 

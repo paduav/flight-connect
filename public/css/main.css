@@ -190,6 +190,14 @@
             z-index: 2;
         }
 
+        .badge.reissued {
+            background: #ffd6a5;
+            padding: 4px 6px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+
     #rightPanel {
         display: flex;
         flex-direction: column;
@@ -206,7 +214,7 @@
 
 
     #passengersContainer {
-        max-height: 588px;   
+        max-height: 606px;   
         overflow-y: auto;
     }
 
