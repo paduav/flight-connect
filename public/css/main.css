@@ -86,57 +86,83 @@
 
 /* #region home.css */
 
-#majorDelaysTable {
-    width: 100%;              
-    margin: 0 auto;  
-    border-collapse: collapse;
-    border: 4px solid black;
-}
-
-    #majorDelaysTable th {
-        text-align: center;      
-        padding: 10px;
-    }
-
-    #majorDelaysTable td {
-        text-align: center;
-        padding: 10px;
-    }
 
 #dashboardContainer {
     display: flex;
-    gap: 40px;
-    align-items: center; 
+    flex-direction: column;
+    gap: 20px;
+    border: 3px solid black;
+    padding: 20px;
+    background-color: rgb(241, 223, 191);
 }
 
+    #dashboardContent {
+        display: flex;
+        gap: 40px;
+        align-items: flex-start;
+    }
+
+    #majorDelaysContainer,
+    #flightStatusContainer {
+        min-height: 400px;
+    }
 
     #majorDelaysContainer {
         flex: 2;
     }
 
-    #flightStatusContainer {
-        flex: 1;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        margin: 0;
-        padding: 0;
-        min-height: 0; 
-    }
-
-        .chartBox {
-            display: flex;
-            justify-content: center;
-            align-items: center; 
-            width: 100%; 
-            max-width: 300px; 
-            height: auto;       
+        #majorDelaysTable {
+            width: 100%;              
+            margin: 0 auto;
+            border-collapse: collapse;
+            border: 2px solid black;
+            height: 400px;
         }
 
-            #flightStatusChart {
-                width: 100% !important;
-                height: 100% !important; 
+            #majorDelaysTable thead th {
+                position: sticky;
+                top: 0;
+                background: rgb(236, 211, 167);
+                z-index: 2;
             }
+            #majorDelaysTable th {
+                text-align: center;      
+                padding: 10px;
+            }
+            #majorDelaysTable tr {
+                border: 2px solid black;
+                padding: 8px;
+                text-align: center;
+            }
+
+            #majorDelaysTable td {
+                text-align: center;
+                padding: 10px;
+            }
+
+        #flightStatusContainer {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin: 0;
+            padding: 0;
+            min-height: 0; 
+        }
+
+            .chartBox {
+                display: flex;
+                justify-content: center;
+                align-items: center; 
+                width: 100%; 
+                max-width: 300px; 
+                height: auto;       
+            }
+
+                #flightStatusChart {
+                    width: 100% !important;
+                    height: 100% !important; 
+                }
 
 
 /* #endregion */
@@ -164,9 +190,24 @@
             z-index: 2;
         }
 
+    #rightPanel {
+        display: flex;
+        flex-direction: column;
+    }
+
+        #flightSearch {
+            position: sticky;
+            top: 0;
+            z-index: 3;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 2px solid black;
+            background: white;
+        }
+
 
     #passengersContainer {
-        max-height: 500px;   
+        max-height: 588px;   
         overflow-y: auto;
     }
 
@@ -221,6 +262,68 @@
                 background-color: #f0f0f0;
                 font-weight: bold;
             }
+
+            .delay-ontime {
+                background-color: #c8f7c5;
+                font-weight: bold;
+            }
+
+            .delay-minor {
+                background-color: #fff3b0;
+                font-weight: bold;
+            }
+
+            .delay-moderate {
+                background-color: #ffd6a5;
+                font-weight: bold;
+            }
+
+            .delay-severe {
+                background-color: #ffadad;
+                font-weight: bold;
+            }
+
+#loadingOverlay {
+    position: fixed;
+    inset: 0;
+    background:  rgba(226, 224, 220, 0.74);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#progressText {
+    background-color: white;
+    border: 2px solid black;
+    padding: 8px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 0px black;
+    font-style: bold;
+}
+
+.progress-wrapper {
+    width: 320px;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 14px;
+    background: #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 12px;
+}
+
+#progressFill {
+    height: 100%;
+    width: 0%;
+    background: #2c3e50;
+    transition: width 0.4s ease;
+}
+
 
 
 /* #endregion */
