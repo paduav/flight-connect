@@ -51,7 +51,7 @@ async function fetchFlights() {
 
         const res = await fetch(''); // REMEMBER TO CHANGE TO AVIATIONSTACK API
 
-
+        
 
 
         const data = await res.json();
@@ -158,16 +158,24 @@ async function fillPassengersForFlights() {
 
         const passengers = generatePassengers(flight.id, 30);
 
-        const { data: insertedPassengers, error: insertError } = await supabase
+        const { error: deleteError } = await supabase
             .from('passengers')
             .delete()
             .eq('flight_id', flight.id);
-            
+
+        if (deleteError) {
+            console.error(`Failed to delete passengers for flight ${flight.flight_iata}`, deleteError);
+            continue;
+        }
+
+        const { error: insertError } = await supabase
+            .from('passengers')
+            .insert(passengers);
 
         if (insertError) {
-            console.error(`Failed to insert passengers for flight ${flight.flight_iata}:`, insertError);
+            console.error(`Failed to insert passengers for flight ${flight.flight_iata}`, insertError);
         } else {
-            console.log(`Inserted ${insertedPassengers.length} passengers for flight ${flight.flight_iata}`);
+            console.log(`Inserted passengers for flight ${flight.flight_iata}`);
         }
     }
 }
