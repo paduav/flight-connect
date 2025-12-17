@@ -5,6 +5,7 @@ let map;
 let flightMarker = null;
 let sortByDelay = false;
 let selectedFlightId = null;
+let progressInterval = null;
 
 
 
@@ -21,13 +22,64 @@ function formatTime(ts) {
 
 // Loading screen functions
 function setProgress(percent, text) {
-    document.getElementById('progressFill').style.width = `${percent}%`;
-    document.getElementById('progressText').innerText = text;
+    if (percent !== null) {
+        document.getElementById('progressFill').style.width = `${percent}%`;
+        // document.getElementById('planeIcon').style.left = `${percent}%`;
+    }
+
+    if (text) {
+        document.getElementById('progressText').innerText = text;
+    }
 }
+
 
 function hideLoading() {
     document.getElementById('loadingOverlay').style.display = 'none';
 }
+
+function showLoading() {
+    const overlay = document.getElementById('loadingOverlay');
+    overlay.style.display = 'flex';
+    setProgress(0, 'Starting refresh…');
+}
+
+function smoothProgress(target, speed = 40) {
+    const fill = document.getElementById('progressFill');
+    //const plane = document.getElementById('planeIcon');
+
+    let current = parseFloat(fill.style.width) || 0;
+    if (current >= target) return;
+
+    if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
+    }
+
+    //plane.classList.add('plane-moving');
+
+    const step = 0.15;
+
+    progressInterval = setInterval(() => {
+        const diff = target - current;
+        current += Math.max(diff * 0.08, step);
+
+        if (current >= target) {
+            current = target;
+            clearInterval(progressInterval);
+            progressInterval = null;
+
+            //plane.classList.remove('plane-moving');
+        }
+
+        fill.style.width = current.toFixed(1) + '%';
+
+        const clamped = Math.min(current, 98);
+        //plane.style.left = clamped + '%';
+
+    }, speed);
+}
+
+
 
 
 // Cache and schedule creation functions
@@ -248,26 +300,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Refresh data button
     const refreshButton = document.getElementById('refreshDataButton');
+
     if (refreshButton) {
         refreshButton.addEventListener('click', async () => {
-            try {
-                setProgress(10, 'Refreshing flight data…');
+            refreshButton.disabled = true;
 
-                // Update cache (Aviationstack + Supabase)
+            try {
+                showLoading();
+                setProgress(0, 'Getting flight data…');
+                smoothProgress(70, 975);
+
+                // Hit Aviationstack + Supabase
                 await fetch('/cache-flights', { method: 'POST' });
 
-                setProgress(60, 'Reloading schedules…');
 
+                setProgress(null, 'Reloading schedules…');
+                smoothProgress(80, 600);
+
+                // Reload from Supabase
                 await loadSchedules();
 
-                setProgress(100, 'Done');
-                setTimeout(hideLoading, 300);
-            } catch (err) {
-                console.error('Refresh failed:', err);
-                setProgress(100, 'Refresh failed');
-            }
-        })
-    };
+
+            setProgress(null, 'Finalizing…');
+            smoothProgress(95, 60);
+
+            setTimeout(() => {
+                setProgress(100, 'Done!');
+                hideLoading();
+            }, 600);
+
+                } catch (err) {
+                    console.error('Refresh failed:', err);
+                    setProgress(100, 'Refresh failed');
+                    setTimeout(hideLoading, 700);
+
+                } finally {
+                    refreshButton.disabled = false;
+                }
+            });
+}
+
 
     // Live flights only toggle
     const liveOnlyToggle = document.getElementById('liveOnlyToggle');
