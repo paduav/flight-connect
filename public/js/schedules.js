@@ -389,7 +389,7 @@ document.getElementById('reissueTickets')
 
     const result = await response.json();
 
-    alert(result.message);
+    alert(result.message || result.error || 'Unknown error');
 
     // Reload passengers to show updated status
     loadPassengers(selectedFlightId);

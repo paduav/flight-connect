@@ -258,7 +258,6 @@ app.post('/flights/:flightId/reissue-tickets', async (req, res) => {
     const { flightId } = req.params;
 
     try {
-
         const { data: passengers, error } = await supabase
             .from('passengers')
             .select('*')
@@ -266,7 +265,10 @@ app.post('/flights/:flightId/reissue-tickets', async (req, res) => {
             .eq('checked_in', false)
             .eq('ticket_reissued', false);
 
-        if (error) throw error;
+        if (error) {
+            console.error('Select error:', error);
+            throw error;
+        }
 
         if (!passengers.length) {
             return res.json({ message: 'No passengers eligible for reissue' });
@@ -281,7 +283,10 @@ app.post('/flights/:flightId/reissue-tickets', async (req, res) => {
             .from('passengers')
             .upsert(updates);
 
-        if (updateError) throw updateError;
+        if (updateError) {
+            console.error('Update error:', updateError);
+            throw updateError;
+        }
 
         res.json({
             message: `Reissued ${updates.length} tickets`,
@@ -289,7 +294,7 @@ app.post('/flights/:flightId/reissue-tickets', async (req, res) => {
         });
 
     } catch (err) {
-        console.error('Reissue error:', err);
+        console.error('Reissue error (VERCEL):', err);
         res.status(500).json({ error: 'Failed to reissue tickets' });
     }
 });
