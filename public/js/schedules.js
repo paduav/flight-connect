@@ -34,8 +34,14 @@ function setProgress(percent, text) {
 
 
 function hideLoading() {
-    document.getElementById('loadingOverlay').style.display = 'none';
+    const overlay = document.getElementById('loadingOverlay');
+    overlay.classList.add('loading-exit');
+    setTimeout(() => {
+        overlay.style.display = 'none';
+        overlay.classList.remove('loading-exit');
+    }, 350);
 }
+
 
 function showLoading() {
     const overlay = document.getElementById('loadingOverlay');

@@ -6,7 +6,11 @@
     border: 3px solid rgb(0, 0, 0);
     padding: 20px;
     min-height: 100vh;
-}
+    animation: pageFade 0.45s ease-out;}
+    @keyframes pageFade {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
 
 .header {
     width: 100%;
@@ -139,6 +143,24 @@
             transform: translateY(0);
         }
 
+#dashboardContainer,
+#schedulesContainer,
+#aboutContainer {
+    animation: contentEnter 0.5s ease-out both;
+    animation-delay: 0.15s;
+}
+
+@keyframes contentEnter {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* #endregion */
 
 
@@ -206,7 +228,18 @@
                 align-items: center; 
                 width: 100%; 
                 max-width: 300px; 
-                height: auto;       
+                height: auto;
+                animation: chartEnter 0.6s ease-out;    
+            }
+            @keyframes chartEnter {
+                from {
+                    opacity: 0;
+                    transform: scale(0.95);
+                }
+                to {
+                    opacity: 1;
+                    transform: scale(1);
+                }
             }
                 #flightStatusChart {
                     width: 100% !important;
@@ -272,12 +305,12 @@
             width: 100%;
             border-collapse: collapse;
         }
-            #passengersContainer th,
-            #passengersContainer td {
-                border: 2px solid black;
-                padding: 8px;
-                text-align: center;
-            }
+        #passengersContainer th,
+        #passengersContainer td {
+            border: 2px solid black;
+            padding: 8px;
+            text-align: center;
+        }
 
     #timeTableContainer {
         height: 500px;
@@ -293,7 +326,13 @@
                 border: 2px solid black;
                 padding: 8px;
                 text-align: center;
-            }       
+            }
+            #timeTable tbody tr {
+                transition: background-color 0.25s ease, transform 0.2s ease;
+            }
+            #timeTable tbody tr:hover {
+                transform: translateX(4px);
+            }
             #timeTable th {
                 text-align: center;      
                 padding: 10px;
@@ -302,52 +341,92 @@
                 position: sticky;
                 top: 0;
                 background: rgb(225, 196, 145);
-                z-index: 2;
+                z-index: 3;
             }
             #timeTable td {
                 text-align: center;
                 padding: 10px;
             }
-            .active-flight {
-                background-color: #f0f0f0;
-                font-weight: bold;
+
+        .active-flight {
+            background-color: #f0f0f0;
+            font-weight: bold;
+            animation: selectPulse 0.4s ease;
+        }       
+            @keyframes selectPulse {
+                0% { background-color: #e8f4ff; }
+                50% { background-color: #cfe8ff; }
+                100% { background-color: #e8f4ff; }
             }
-            .delay-ontime {
-                background-color: #c8f7c5;
-                font-weight: bold;
+
+        .delay-ontime {
+            background-color: #c8f7c5;
+            font-weight: bold;
+        }
+        .delay-minor {
+            background-color: #fff3b0;
+            font-weight: bold;
+        }
+        .delay-moderate {
+            background-color: #ffd6a5;
+            font-weight: bold;
+        }
+        .delay-severe {
+            background-color: #ffadad;
+            font-weight: bold;
+        }         
+        .live-flight {
+            border-left: 4px solid #2ecc71;
+            background-color: rgba(46, 204, 113, 0.08);
+            font-weight: 500;
+            animation: liveGlow 1.8s ease-in-out infinite;
+        }
+            @keyframes liveGlow {
+                0% {
+                    background-color: rgba(46, 204, 113, 0.06);
+                }
+                50% {
+                    background-color: rgba(46, 204, 113, 0.14);
+                }
+                100% {
+                    background-color: rgba(46, 204, 113, 0.06);
+                }
             }
-            .delay-minor {
-                background-color: #fff3b0;
-                font-weight: bold;
+            
+        .live-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            margin-left: 6px;
+            font-size: 11px;
+            border-radius: 4px;
+            background: #2ecc71;
+            color: #fff;
+            animation: badgePulse 1.6s ease-in-out infinite;
+        }
+            @keyframes badgePulse {
+                0% {
+                    transform: scale(1);
+                    box-shadow: 0 0 0 rgba(46, 204, 113, 0.7);
+                }
+                50% {
+                    transform: scale(1.08);
+                    box-shadow: 0 0 10px rgba(46, 204, 113, 0.9);
+                }
+                100% {
+                    transform: scale(1);
+                    box-shadow: 0 0 0 rgba(46, 204, 113, 0.7);
+                }
             }
-            .delay-moderate {
-                background-color: #ffd6a5;
-                font-weight: bold;
+
+        .tooltip {
+            position: relative;
+            cursor: help;
+            border-bottom: 1px dotted black;
+            z-index: 1;
+        }
+            .tooltip:hover {
+                z-index: 5;
             }
-            .delay-severe {
-                background-color: #ffadad;
-                font-weight: bold;
-            }         
-            .live-flight {
-                border-left: 4px solid #2ecc71;
-                background-color: rgba(46, 204, 113, 0.08);
-                font-weight: 500;
-            }
-            .live-badge {
-                display: inline-block;
-                padding: 2px 6px;
-                margin-left: 6px;
-                font-size: 11px;
-                border-radius: 4px;
-                background: #2ecc71;
-                color: #fff;
-            }
-            .tooltip {
-                position: relative;
-                cursor: help;
-                border-bottom: 1px dotted black;
-            }
-            /* Tooltip bubble */
             .tooltip::after {
                 content: attr(data-tooltip);
                 position: absolute;
@@ -367,8 +446,6 @@
                 transition: opacity 0.15s ease;
                 z-index: 1000;
             }
-
-            /* Little arrow */
             .tooltip::before {
                 content: '';
                 position: absolute;
@@ -383,12 +460,32 @@
                 opacity: 0;
                 transition: opacity 0.15s ease;
             }
-
-            /* Show on hover */
             .tooltip:hover::after,
             .tooltip:hover::before {
                 opacity: 1;
+                z-index: 10;
             }
+            .tooltip::after {
+                bottom: 130%;
+                top: auto;
+            }
+            .tooltip::before {
+                bottom: 120%;
+                top: auto;
+                border-color: #222 transparent transparent transparent;
+            }
+
+        #timeTable tbody tr:first-child .tooltip::after,
+        #timeTable tbody tr:nth-child(2) .tooltip::after {
+            top: 130%;
+            bottom: auto;
+        }
+        #timeTable tbody tr:first-child .tooltip::before,
+        #timeTable tbody tr:nth-child(2) .tooltip::before {
+            top: 120%;
+            bottom: auto;
+            border-color: transparent transparent #222 transparent;
+        }
 
 #helpContainer {
     padding: 20px;
@@ -400,12 +497,36 @@
 #loadingOverlay {
     position: fixed;
     inset: 0;
-    background:  rgba(226, 224, 220, 0.74);
+    top: 0;
+    left: 0;
+    background: rgba(226, 224, 220, 0.74);
     z-index: 9999;
     display: flex;
     align-items: center;
     justify-content: center;
+    animation: overlayIn 0.4s ease forwards;
+    transform: translateZ(0);
 }
+    @keyframes overlayIn {
+        from {
+            opacity: 0;
+            backdrop-filter: blur(0);
+        }
+        to {
+            opacity: 1;
+            backdrop-filter: blur(3px);
+        }
+    }
+
+    .loading-exit {
+    animation: overlayOut 0.35s ease forwards;
+    }
+        @keyframes overlayOut {
+            to {
+                opacity: 0;
+            }
+        }
+    
     #progressText {
         background-color: white;
         border: 2px solid black;
@@ -418,7 +539,21 @@
         width: 320px;
         text-align: center;
         font-size: 1.1rem;
+        animation: progressPop 0.35s ease-out;
+        backdrop-filter: none;
+        filter: none;
     }
+        @keyframes progressPop {
+            from {
+                opacity: 0;
+                transform: translateY(12px) scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
     .progress-bar {
         position: relative;
         width: 100%;
@@ -431,8 +566,13 @@
     #progressFill {
         height: 100%;
         width: 0%;
-        background: #2c3e50;
-        transition: width 0.4s ease;
+        background: linear-gradient(
+            90deg,
+            #2c3e50,
+            #34495e,
+            #2c3e50
+        );
+        transition: width 0.35s ease-in-out;
     }
     /*
     #planeIcon {
