@@ -117,7 +117,11 @@ function renderFlights(flights) {
     tableBody.innerHTML = '';
 
     flights.forEach(flight => {
-        const hasLiveData = flight.live_latitude != null && flight.live_longitude != null;
+        const hasLiveData =
+            flight.live_latitude !== null &&
+            flight.live_longitude !== null;
+
+
         const row = document.createElement('tr');
         row.style.cursor = 'pointer';
 
@@ -143,6 +147,11 @@ function renderFlights(flights) {
                 <span class="tooltip" data-tooltip="${flight.airline_name || 'Unknown airline'}">
                     ${flight.flight_iata || 'N/A'}
                 </span>
+                ${
+                    hasLiveData
+                        ? '<span class="live-badge">LIVE</span>'
+                        : ''
+                }
             </td>
 
             <td>
@@ -227,8 +236,10 @@ function initializeMap() {
 }
 
 function showFlightOnMap(flight) {
-
-    if (!flight.live_latitude || !flight.live_longitude) {
+    if (
+        flight.live_latitude === null ||
+        flight.live_longitude === null
+    ) {
         console.warn('No live data for flight', flight.flight_iata);
         return;
     }
@@ -270,7 +281,8 @@ function applyFiltersAndSort() {
 
     if (liveOnly) {
         result = result.filter(f =>
-            f.live_latitude && f.live_longitude
+            f.live_latitude !== null &&
+            f.live_longitude !== null
         );
     }
 

@@ -236,7 +236,7 @@
             font-weight: bold;
         }
         #leftPanel {
-            max-height: 762px;
+            height: 762px;
         }
             #leftPanel thead th {
                 position: sticky;

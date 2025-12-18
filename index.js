@@ -89,8 +89,11 @@ async function cacheFlights() {
         arrival_time: f.arrival?.scheduled || null,
         arrival_delay: f.arrival?.delay || 0,
         flight_status: f.flight_status || 'unknown',
-    };
 
+        live_latitude: null,
+        live_longitude: null,
+        live_updated: null
+    };
 
     if (f.live?.latitude != null && f.live?.longitude != null) {
         flight.live_latitude = f.live.latitude;
