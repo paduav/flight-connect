@@ -265,7 +265,7 @@
             }
 
     #passengersContainer {
-        max-height: 337px;   
+        height: 337px;   
         overflow-y: auto;
     }
         #passengersContainer table {
