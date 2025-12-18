@@ -450,3 +450,13 @@
     */
 
 /* #endregion */
+
+
+/* #region about.css */
+#aboutContainer {
+    font-size: medium;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* #endregion */

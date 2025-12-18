@@ -1,0 +1,80 @@
+<!-- FlightConnect about.html -->
+
+<html>
+
+    <head>
+        <title>About - FlightConnect</title>
+        <link rel="stylesheet" href="/css/main.css">
+    </head>
+
+
+    <body class="mainBody">
+
+        <header class="header">
+            <div class="titleContainer">
+                <h1 class="title">FlightConnect</h1>
+                <img src="/images/logo.png" class="logo">
+            </div>
+            
+            <nav class="navBar">
+                <ul>
+                    <li><button class="button-74" onclick="window.location.href='/dashboard'">Home</button></li>
+
+                    <li><button class="button-74" onclick="window.location.href='/schedules'">Schedules</button></li>
+
+                    <li><button class="button-74" onclick="window.location.href='/about'">About</button></li>
+                </ul>
+            </nav>
+        </header>
+
+        <br>
+        <div id="aboutContainer">
+            <h1>About FlightConnect</h1>
+
+            <h2>Overview</h2>
+            <p>
+                <strong>
+                    FlightConnect is a web-based application designed to assist airline operations and customer service teams in managing flight schedules and passenger information efficiently. The platform provides a centralized view of flight status passengers, and real-time aircraft tracking.
+                </strong>
+            </p>
+
+            <h2>The Information Problem</h2>
+            <p>
+                <strong>
+                    Airline staff often rely on multiple systems and manual checks to determine whether passengers will be able to make their flights. This can slow decision-making, increase operational delays, and negatively impact the experience of other passengers.
+                </strong>
+            </p>
+
+            <h2>Solution</h2>
+            <p>
+                <strong>
+                    FlightConnect addresses this challenge by consolidating flight data and passenger information into a single, easy to read interface. By providing real-time visibility into delays, check-in status, and ticket eligibility, staff can take faster and more informed action.
+                </strong>
+            </p>
+
+            <h2>Key Features</h2>
+            <ul>
+                <li><strong>Live Flight Tracking:</strong> Displays real-time aircraft position data when available.</li>
+                <li><strong>Passenger Management:</strong> View passenger lists for each flight, including check-in, ticket status.</li>
+                <li><strong>Ticket Reissue:</strong> Quickly reissue tickets for eligible passengers who have not checked in.</li>
+                <li><strong>Delay Visualization:</strong> Highlights and sorts flights by delay severity for better prioritization.</li>
+                <li><strong>Interactive Map:</strong> Shows active flights on a global map.</li>
+            </ul>
+
+            <h2>How It Works</h2>
+            <p>
+                <strong>
+                    FlightConnect retrieves live flight data from an external aviation API and caches the data into a database using a custom backend endpoint to ensure fast, reliable access. The frontend fetches this cached data to present consistent and up-to-date information to staff.
+                </strong>
+            </p>
+
+            <h2>Impact</h2>
+            <p>
+                <strong>
+                    By reducing reliance on manual checks and multiple systems, FlightConnect enables airline staff to respond more quickly to disruptions, minimize delays, and improve the overall travel experience.
+                </strong>
+            </p>
+        </div>
+    </body>
+
+</html>
