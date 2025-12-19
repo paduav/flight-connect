@@ -182,11 +182,12 @@ Reissues tickets for all passengers not checked-in for a given flight.
 - Error handling for external API failures can be expanded.
 
 
-## Future Development
+## Development Roadmap
 Planned improvements include:
-- User authentication and staff roles
-- Real passenger data integration
+- Converting larger delays from minutes into hours and minutes for major delays table
+- Mobile support/responsiveness
 - Full support for live tracking and enhanced visualization
 - Improved logging and monitoring
+- Staff roles
+- Real passenger data integration
 - Automated testing
-- Mobile support/responsiveness
