@@ -5,7 +5,7 @@
 [Developer Manual](#developer-manual)**.
 
 ## Description
-FlightConnect is a web-based flight operations dashboard designed to assist airline staff in managing flight schedules, delays, and passenger status efficiently. The application aggregates flight data from an external aviation API, caches it in a backend database, and presents the information through an interactive, easy to read interface.
+FlightConnect is a web-based flight operations dashboard designed to assist airline staff in managing flight schedules, delays, and passenger status efficiently. The application pulls flight data from an external aviation API, caches it in a backend database, and presents the information through an interactive, easy to read interface.
 
 The system enables staff to quickly identify delayed flights, manage passengers, determine check-in status, and perform operational actions such as ticket reissuance. When available, real-time aircraft position data is displayed on an interactive map.
 
