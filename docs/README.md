@@ -64,7 +64,7 @@ Flight data is periodically fetched from the external API, normalized, and cache
 ### Installation Steps
 1. Clone the project repository:
    ```
-   git clone https://github.com/k-zrsn/flight-connect
+   git clone https://github.com/paduav/flight-connect
     ```
 
 2. Install dependencies:
