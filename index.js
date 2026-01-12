@@ -328,7 +328,7 @@ module.exports = app;
 
 
 /* Local testing
-*/
 app.listen(port, () => {
     console.log('App is available on port:', port);
 });
+*/
