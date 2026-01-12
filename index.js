@@ -192,7 +192,7 @@ async function fillPassengersForFlights() {
     }
 }
 
-// Clear all passengers
+/// Clear all passengers
 async function clearPassengers() {
     const { error } = await supabase
         .from('passengers')
@@ -206,6 +206,20 @@ async function clearPassengers() {
     }
 }
 
+/// Clear all flights
+async function clearFlights() {
+    const { error } = await supabase
+        .from('flights')
+        .delete()
+        .neq('id', 0);
+
+    if (error) {
+        console.error('Failed to clear flights:', error);
+    } else {
+        console.log('All flights deleted');
+    }
+}
+
 
 
 // API endpoints
@@ -213,6 +227,7 @@ async function clearPassengers() {
 app.post('/cache-flights', async (req, res) => {
     try {
         await clearPassengers();
+        await clearFlights();
         await cacheFlights();
         await fillPassengersForFlights();
 
@@ -313,7 +328,7 @@ module.exports = app;
 
 
 /* Local testing
+*/
 app.listen(port, () => {
     console.log('App is available on port:', port);
 });
-*/
